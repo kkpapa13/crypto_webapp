@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>交易紀錄與盈虧</title>
+
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .container { max-width: 1200px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        nav { margin-bottom: 1em; }
+        .form-group { margin-bottom: 1em; }
+        label { display: block; margin-bottom: 0.5em; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .flash { padding: 10px; border-radius: 5px; margin-bottom: 1em; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .profit-positive { color: green; font-weight: bold; }
+        .profit-negative { color: red; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="/">首頁</a> | <a href="/trades">查看所有交易紀錄</a>
+        </nav>
+        <h1>各幣種總盈虧</h1>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>幣種</th>
+                    <th>總盈虧</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coin, pnl in coin_pnl.items() %}
+                <tr>
+                    <td>{{ coin }}</td>
+                    <td>
+                        <span class="{{ 'profit-positive' if pnl >= 0 else 'profit-negative' }}">
+                            {{ "%.2f"|format(pnl) }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        ---
+
+        <h2>新增交易</h2>
+        <form id="tradeForm" method="POST" action="/trade">
+            <div class="form-group">
+                <label for="coin">幣種：</label>
+                <select name="coin" id="coin" required>
+                    <option value="">請選擇</option>
+                    <option value="BTC">BTC</option>
+                    <option value="ETH">ETH</option>
+                    <option value="SOL">SOL</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="type">類型：</label>
+                <select name="type" id="type" required>
+                    <option value="">請選擇</option>
+                    <option value="buy">買入</option>
+                    <option value="sell">賣出</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="price">價格：</label>
+                <input type="text" name="price" id="price" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">數量：</label>
+                <input type="text" name="amount" id="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="note">備註（可選）：</label>
+                <input type="text" name="note" id="note">
+            </div>
+            <button type="submit">送出</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>交易紀錄</title>
+    <style>
+        /* 新增樣式定義 */
+        .profit-positive { color: green; }
+        .profit-negative { color: red; }
+        .profit-display {
+            font-size: 1.5em;
+            margin-top: 20px;
+            border-top: 2px solid #333;
+            padding-top: 10px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>所有交易紀錄</h2>
+    <a href="/">🔙 回首頁</a>
+    
+    <table>
+        <tr>
+            <th>幣種</th>
+            <th>類型</th>
+            <th>價格</th>
+            <th>數量</th>
+            <th>備註</th>
+            <th>時間</th>
+            <th>操作</th>
+        </tr>
+        {% for t in trades %}
+        <tr>
+            <td>{{ t.coin_id }}</td>
+            <td>{{ '買入' if t.trade_type == 'buy' else '賣出' }}</td>
+            <td>{{ "%.8f"|format(t.price) }}</td>
+            <td>{{ "%.8f"|format(t.amount) }}</td>
+            <td>{{ t.note if t.note else '-' }}</td>
+            <td>{{ t.trade_time }}</td>
+            <td>
+                <a href="/edit/{{ t.trade_id }}">✏️ 編輯</a> |
+                <a href="/delete/{{ t.trade_id }}" onclick="return confirm('確定要刪除這筆交易嗎？')">🗑️ 刪除</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+   
+    <br>
+    <a href="/">🔙 回首頁</a>
+</body>
+</html>

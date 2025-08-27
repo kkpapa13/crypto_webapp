@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>編輯交易紀錄</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>✏️ 編輯交易紀錄</h2>
+
+    <form action="{{ url_for('edit_trade', trade_id=trade.trade_id) }}" method="post">
+        <label>幣種: 
+            <select name="coin" required>
+                <option value="BTC" {% if trade.coin_id == 'BTC' %}selected{% endif %}>Bitcoin (BTC)</option>
+                <option value="ETH" {% if trade.coin_id == 'ETH' %}selected{% endif %}>Ethereum (ETH)</option>
+                <option value="SOL" {% if trade.coin_id == 'SOL' %}selected{% endif %}>Solana (SOL)</option>
+            </select>
+        </label>
+
+        <label>類型: 
+            <select name="type" required>
+                <option value="buy" {% if trade.trade_type == 'buy' %}selected{% endif %}>買入</option>
+                <option value="sell" {% if trade.trade_type == 'sell' %}selected{% endif %}>賣出</option>
+            </select>
+        </label>
+
+        <label>價格: 
+            <input type="number" step="0.00000001" name="price" value="{{ "%.8f"|format(trade.price) if trade.price is not none }}" required>
+        </label>
+
+        <label>數量: 
+            <input type="number" step="0.00000001" name="amount" value="{{ "%.8f"|format(trade.amount) if trade.amount is not none }}" required>
+        </label>
+
+        <label>止盈價 (可選): 
+            <input type="number" step="0.00000001" name="take_profit" value="{{ "%.8f"|format(trade.take_profit) if trade.take_profit is not none }}" placeholder="自動賣出價格">
+        </label>
+
+        <label>止損價 (可選): 
+            <input type="number" step="0.00000001" name="stop_loss" value="{{ "%.8f"|format(trade.stop_loss) if trade.stop_loss is not none }}" placeholder="自動賣出價格">
+        </label>
+
+        <label>進場理由: 
+            <input type="text" name="note" value="{{ trade.note if trade.note is not none }}" placeholder="交易備註">
+        </label>
+
+        <button type="submit">💾 更新交易</button>
+    </form>
+
+    <br>
+    <a href="/trades">🔙 回交易紀錄</a>
+</body>
+</html>
